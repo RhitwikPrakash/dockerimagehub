@@ -36,10 +36,9 @@ jobs:
         pytest
 
   build-and-publish:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-
-    steps:
+  needs: build-and-test
+  runs-on: ubuntu-latest
+  steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
@@ -53,12 +52,14 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build and push Docker image
+      id: docker_build
       uses: docker/build-push-action@v4
       with:
         context: .
-        file: ./DockerFile
+        file: ./Dockerfile
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/flasktest-app:latest
 
-    - name: Image digest
-      run: echo ${{ steps.build-and-publish.outputs.digest }}
+    - name: Docker image pushed
+      run: echo "Docker image ${{ secrets.DOCKER_USERNAME }}."
+
